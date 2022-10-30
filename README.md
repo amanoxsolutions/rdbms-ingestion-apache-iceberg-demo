@@ -1,4 +1,4 @@
-# Demo of RDBMS Ingestion Into Datalake with AWS Glue & Apache Iceberg 
+# Demo of RDBMS Ingestion Into an AWS Datalake with AWS Glue & Apache Iceberg 
 
 ## Credits
 This demo is an extension of this AWS Blog article 
