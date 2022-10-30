@@ -28,6 +28,9 @@ database from a PostgreSQL client. __This is not recommended for production depl
 and perform queries on the DB.
 
 ## Deploying the demo
+Please refer to this demo's [Terraform Documentation](./TERRAFORM.md) for more details about this Terraform code and
+options.
+
 1. Clone this repo and navigate into the repository folder.
 2. Create in the folder an `env.tfvars` file and put the following content in it:
     ```
