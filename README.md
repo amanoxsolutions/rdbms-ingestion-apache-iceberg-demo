@@ -6,10 +6,10 @@ This demo is an extension of this AWS Blog article
 by *Sakti Mishra*.
 
 It extends that demo by:
-- deploying an Amazon Aurora PostgreSQL database and aa AWS DMS (Database Migration Service) instance to ingest the 
+- deploying an Amazon Aurora PostgreSQL database and an AWS DMS (Database Migration Service) instance to ingest the 
 RDBMS transaction data into S3.
-- automating the trigger of the AWS Glue Job to convert the RDBMS transactions data into Apache Iceberg data files,
-when the AWS DMS service writes files in the `RAW` S3 bucket.
+- automating the trigger (as files are written into the RAW Amazon S3 bucket), of the AWS Glue Job to convert the RDBMS 
+transactions data into Apache Iceberg data files, when the AWS DMS service writes files in the `RAW` S3 bucket.
 
 The objective is to demo __end-to-end__ how the RDBMS transactions (INSERT, UPDATE, DELETE) are ingested into a datalake
 by the AWS DMS, transformed using AWS Glue with the AWS Marketplace Apache Iceberg extension to provide "ACID 
@@ -48,23 +48,32 @@ It will take several minutes (~12 min) for the Amazon Aurora RDS instance and AW
 ### Overview
 In this demo you will perform the following steps:
 1. Create a table in the Aurora PostgreSQL database and generate fake data. As a result you will see 
-   1. AWS DMS ingesting the data into S3, where you will be able to see the database `INSERT` transaction data.
+   1. AWS DMS ingesting the data into Amazon S3, where you will be able to see the database `INSERT` transaction data.
    2. AWS Glue converting the database transaction data into Apache Iceberg data files.
-2. Using Athena, you will be able to see the table just like it is in the PostgreSQL database.
-3. You will then update and insert rows in the Aurora PostgreSQL database and see DMS ingesting the data into S3 and
-   Glue converting the new data into Apache Iceberg data files.
-4. You will then be able to use Athena to do time travel and look at the data after the first initial ingestion.
+2. Using Amazon Athena, you will be able to see the table just like it is in the PostgreSQL database.
+3. You will then update and insert rows in the Amazon Aurora PostgreSQL database and see AWS DMS ingesting the 
+   transaction data into Amazon S3 and AWS Glue converting the new data into Apache Iceberg data files.
+4. You will then be able to use Amazon Athena to do time travel and look at the data after the first initial ingestion.
 
 ## Finish Preparing the Environment
-1. Navigate to the `RDS > Aurora PostgreSQL > iceberg-poc-source-db > iceberg-poc-source-db-1` instance and copy 
+1. Create an env.tfvars file and put the following content in it:
+    ```
+    aws_profile_name                   = "<The name of your AWS CLI profile>"
+    db_password                        = "<A password of your choice>"
+    apache_iceberg_glue_connector_name = "<The name of the AWS Glue Connector you will create in the next step>"
+    ```
+2. From the `AWS Glue Studio > Connectors` console, follow the steps in the [AWS Blog post](https://aws.amazon.com/blogs/big-data/implement-a-cdc-based-upsert-in-a-data-lake-using-apache-iceberg-and-aws-glue/) 
+   to create the `Apache Iceberg Connector for Glue`. Set the name of the connector to the value you set for the 
+   `apache_iceberg_glue_connector_name` variable in the `env.tfvars` file.
+3. Navigate to the `RDS > Aurora PostgreSQL > iceberg-poc-source-db > iceberg-poc-source-db-1` instance and copy 
    the `Endpoint` and `Port` values
    ![Aurora PostgreSQL Endpoint](./doc/images/rds-endpoint-configuration.jpg)
-2. Configure your PostgreSQL client with the host, port, database name, username and password
-3. Navigate to `AWS DMS > Endpoints` and for both endpoints open the `Connections tab` and make sure that the 
+4. Configure your PostgreSQL client with the host, port, database name, username and password
+5. Navigate to `AWS DMS > Endpoints` and for both endpoints open the `Connections tab` and make sure that the 
    connection to both endpoints is successful 
-4. Still in the `AWS DMS` service, navigate to `Database migration tasks > iceberg-poc-cdc` instance, and in the 
+6. Still in the `AWS DMS` service, navigate to `Database migration tasks > iceberg-poc-cdc` instance, and in the 
    `Actions` menu, select `Restart/Resume`. Wait that the `Status`shows `Replication ongoing`.
-5. Navigate to `Athena > Query Editor`, select the `iceberg-poc-wg` workgroup, and in the `Saved queries` tab,
+7. Navigate to `Athena > Query Editor`, select the `iceberg-poc-wg` workgroup, and in the `Saved queries` tab,
    open the `create_iceberg_data_table` query and click `Run`. This will create the Glue Table for the
    Iceberg data in S3.
 

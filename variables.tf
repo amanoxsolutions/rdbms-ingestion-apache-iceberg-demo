@@ -33,13 +33,6 @@ variable "tags" {
 variable "apache_iceberg_glue_connector_name" {
   description = "The name of the Apache Iceberg Glue connector"
   type        = string
-  default     = "Apache Iceberg Connector for Glue 3.0"
-}
-
-variable "apache_iceberg_glue_connection_name" {
-  description = "The name of the Apache Iceberg Glue connection"
-  type        = string
-  default     = "iceberg-poc-glue-connector"
 }
 
 variable "db_username" {
