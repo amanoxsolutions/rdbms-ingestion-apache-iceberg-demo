@@ -48,8 +48,9 @@ module "aurora_cluster" {
   }
   storage_encrypted = true
 
-  master_username = var.db_username
-  master_password = var.db_password
+  create_random_password = false
+  master_username        = var.db_username
+  master_password        = var.db_password
 
   vpc_id                 = module.vpc.vpc_id
   db_subnet_group_name   = aws_db_subnet_group.aurora.name
